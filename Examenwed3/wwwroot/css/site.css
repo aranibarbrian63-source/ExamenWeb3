@@ -1,31 +1,139 @@
+/* 1. IMPORTACIÓN DE FUENTE Y VARIABLES MODERNAS */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+:root {
+    --primary-grad: linear-gradient(135deg, #0d6efd 0%, #00d4ff 100%);
+    --glass-bg: rgba(255, 255, 255, 0.85);
+    --glass-border: rgba(255, 255, 255, 0.3);
+    --shadow-soft: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+}
+
+/* 2. BASE Y TIPOGRAFÍA */
 html {
-  font-size: 14px;
+    font-size: 14px;
+    position: relative;
+    min-height: 100%;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
+    html {
+        font-size: 16px;
+    }
 }
 
 body {
-  margin-bottom: 60px;
+    font-family: 'Inter', sans-serif;
+    background: #f0f2f5; /* Color de fondo suave tipo aplicación moderna */
+    margin-bottom: 60px;
+    color: #2d3436;
 }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
+/* 3. EFECTO GLASSMORPHISM (CRÍTICO PARA EL DASHBOARD) */
+.card, .navbar {
+    background: var(--glass-bg) !important;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid var(--glass-border) !important;
+    border-radius: 16px !important;
+    box-shadow: var(--shadow-soft);
 }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
+/* 4. MEJORA DE FORMULARIOS Y FOCUS (TU CÓDIGO ACTUALIZADO) */
+.form-control, .form-check-input {
+    border-radius: 10px;
+    border: 1px solid #d1d8e0;
+    padding: 0.75rem 1rem;
+    transition: all 0.3s ease;
+}
+
+    .btn:focus, .btn:active:focus, .btn-link.nav-link:focus,
+    .form-control:focus, .form-check-input:focus {
+        box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem rgba(37, 140, 251, 0.4);
+        border-color: #258cfb;
+        transform: translateY(-1px);
+    }
+
+/* 5. BOTONES CON GRADIENTES */
+.btn-primary {
+    background: var(--primary-grad);
+    border: none;
+    font-weight: 600;
+    padding: 0.6rem 1.5rem;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+    .btn-primary:hover {
+        transform: scale(1.02);
+        box-shadow: 0 5px 15px rgba(13, 110, 253, 0.3);
+    }
+
+/* 6. TABLAS PROFESIONALES */
+.table {
+    border-collapse: separate;
+    border-spacing: 0 0.5rem;
+}
+
+    .table thead th {
+        background-color: #2d3436;
+        color: white;
+        border: none;
+        padding: 1rem;
+    }
+
+    .table tbody tr {
+        background: white;
+        transition: all 0.2s ease;
+    }
+
+        .table tbody tr:hover {
+            transform: scale(1.01);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            background-color: #fff !important;
+        }
+
+/* 7. CORRECCIÓN DE PLACEHOLDERS (TU CÓDIGO) */
+.form-floating > .form-control::placeholder {
+    color: #a5b1be;
+    text-align: end;
+}
+
+.form-floating > .form-control:focus::placeholder {
+    text-align: start;
+}
+
+/* 8. BADGES MODERNOS */
+.badge {
+    padding: 0.5em 1em;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+/* Animación de entrada suave para el contenido principal */
+.animate-fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Mejora de la Navbar para que el Glassmorphism se note más */
+.navbar {
+    padding: 0.8rem 1rem;
+    transition: all 0.3s ease;
+}
+
+/* Iconos de navegación con color al pasar el mouse */
+.nav-link:hover i {
+    color: #0d6efd !important;
+    transform: scale(1.2);
+    transition: 0.2s;
 }

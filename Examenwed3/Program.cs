@@ -5,40 +5,54 @@ using Examenwed3.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. CONFIGURACIÓN DE LA CONEXIÓN (Usa solo una cadena de conexión)
+// 1. CONFIGURACIÓN DE LA CONEXIÓN CON REINTENTOS (Evita el error de falla transitoria)
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
-// 2. REGISTRO DEL CONTEXTO ÚNICO
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
+    options.UseSqlServer(connectionString, sqlOptions =>
+    {
+        sqlOptions.EnableRetryOnFailure(); // Sugerido por el error en tu captura
+    }));
 
-// 3. CONFIGURACIÓN DE IDENTITY (Con soporte para Roles y ApplicationUser)
+// 2. CONFIGURACIÓN DE IDENTITY
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => {
     options.SignIn.RequireConfirmedAccount = false;
-    options.Password.RequireDigit = false; // Más fácil para probar en el examen
+    options.Password.RequireDigit = false;
     options.Password.RequiredLength = 6;
     options.Password.RequireNonAlphanumeric = false;
     options.Password.RequireUppercase = false;
 })
-.AddRoles<IdentityRole>() // ¡Crítico para el Administrador!
+.AddRoles<IdentityRole>()
 .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-// 4. CREACIÓN AUTOMÁTICA DE ROLES (Opcional pero recomendado para el examen)
+// 3. CREACIÓN SEGURA DE ROLES (Corregido para evitar el bloqueo del programa)
 using (var scope = app.Services.CreateScope())
 {
-    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-    string[] roleNames = { "Admin", "Cliente" };
-    foreach (var roleName in roleNames)
+    var services = scope.ServiceProvider;
+    try
     {
-        if (!await roleManager.RoleExistsAsync(roleName))
+        var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+        string[] roleNames = { "Admin", "Cliente" };
+
+        foreach (var roleName in roleNames)
         {
-            await roleManager.CreateAsync(new IdentityRole(roleName));
+            // Usamos .GetAwaiter().GetResult() para que el Main espere sin fallar
+            var roleExist = roleManager.RoleExistsAsync(roleName).GetAwaiter().GetResult();
+            if (!roleExist)
+            {
+                roleManager.CreateAsync(new IdentityRole(roleName)).GetAwaiter().GetResult();
+            }
         }
+    }
+    catch (Exception ex)
+    {
+        // Si la DB no está lista, el programa sigue adelante en lugar de cerrarse
+        Console.WriteLine("Log: No se pudieron crear los roles aún. " + ex.Message);
     }
 }
 
@@ -54,13 +68,13 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthentication(); // Quién eres
-app.UseAuthorization();  // Qué puedes hacer
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Dashboard}/{action=Index}/{id?}"); // Cambiado a Dashboard como inicio
 
-app.MapRazorPages(); // Necesario para Identity
+app.MapRazorPages();
 
 app.Run();

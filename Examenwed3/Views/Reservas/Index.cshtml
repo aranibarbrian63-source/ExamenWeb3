@@ -1,53 +1,104 @@
 ﻿@model IEnumerable<Examenwed3.Models.Reserva>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Listado de Reservas";
 }
 
-<h1>Index</h1>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4">
+        <div>
+            <h1 class="display-5 fw-bold text-info"><i class="bi bi-calendar-check"></i> Reservas</h1>
+            <p class="text-muted mb-0">Control y seguimiento de las estadías de los clientes.</p>
+        </div>
+        <div>
+            <a asp-action="Create" class="btn btn-info btn-lg text-white shadow-sm">
+                <i class="bi bi-calendar-plus"></i> Nueva Reserva
+            </a>
+        </div>
+    </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.FechaInicio)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FechaFin)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Usuario)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Hotel)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.FechaInicio)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FechaFin)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Usuario.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Hotel.Direccion)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th class="ps-4">@Html.DisplayNameFor(model => model.Hotel)</th>
+                            <th>@Html.DisplayNameFor(model => model.Usuario)</th>
+                            <th class="text-center">@Html.DisplayNameFor(model => model.FechaInicio)</th>
+                            <th class="text-center">@Html.DisplayNameFor(model => model.FechaFin)</th>
+                            <th class="text-center pe-4">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="ps-4">
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-info text-white rounded-circle p-2 me-3" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                                            <i class="bi bi-building"></i>
+                                        </div>
+                                        <div>
+                                            <span class="fw-bold d-block text-dark">@item.Hotel.Nombre</span>
+                                            <small class="text-muted">ID Hotel: @item.HotelId</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <i class="bi bi-person-circle text-secondary me-1"></i>
+                                    @item.Usuario.Email
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-light text-dark border p-2">
+                                        <i class="bi bi-box-arrow-in-right text-success me-1"></i>
+                                        @item.FechaInicio.ToString("dd/MM/yyyy")
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-light text-dark border p-2">
+                                        <i class="bi bi-box-arrow-left text-danger me-1"></i>
+                                        @item.FechaFin.ToString("dd/MM/yyyy")
+                                    </span>
+                                </td>
+                                <td class="text-center pe-4">
+                                    <div class="btn-group shadow-sm" role="group">
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-warning btn-sm" title="Editar">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </a>
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-info btn-sm" title="Detalles">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger btn-sm" title="Eliminar">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-warning mt-4 text-center shadow-sm" role="alert">
+            <i class="bi bi-exclamation-triangle-fill"></i> No hay reservas registradas. ¡Empieza creando una ahora!
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <style>
+        .table-hover tbody tr:hover {
+            background-color: rgba(13, 202, 240, 0.05); /* Color celeste muy suave */
+            transition: 0.2s;
+        }
+
+        .badge {
+            font-weight: 500;
+        }
+    </style>
 }
-    </tbody>
-</table>
